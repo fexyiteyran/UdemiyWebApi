@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using UdemiyWebApi.DAL.Context;
 using UdemiyWebApi.DAL.Entities;
 
@@ -103,6 +104,30 @@ namespace UdemiyWebApi.Controllers
 
 
         }
+
+
+
+        [HttpGet("{id}/blogs")]
+        public IActionResult GetWithBlogById(int id)
+        {
+            using var context = new UdemiyWebApiContext();
+            var category = context.Categories.Find(id);
+
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+         var categorywithBlos=   context.Categories.Where(I=>I.Id==id).Include(I=>I.Blogs).ToList();
+
+            return Ok(category);
+
+
+        }
+
+
+
 
     }
 }
