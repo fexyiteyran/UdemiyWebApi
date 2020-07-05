@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using UI.Web.Models;
@@ -32,12 +34,37 @@ namespace UI.Web.Controllers
             return View(categories);
         }
 
-
-
-
-
         public IActionResult Privacy()
         {
+            return View();
+        }
+
+
+
+        public IActionResult Create()
+        {
+            
+           
+
+
+            return View();
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> Create(Category category)
+        {
+            using var httpClient = new HttpClient();
+         var JsonCategory=   JsonConvert.SerializeObject(category);
+            StringContent content = new StringContent(JsonCategory,Encoding.UTF8,"application/json");
+       var responceMessage=    await httpClient.PostAsync("http://localhost:63884/api/categories", content);
+
+            if (responceMessage.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Index");
+            }
+
+            ModelState.AddModelError("","bir sorun oluştu");
             return View();
         }
 
